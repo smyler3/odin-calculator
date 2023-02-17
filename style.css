@@ -21,6 +21,7 @@ body {
     display: flex;
     justify-content: end;
     align-items: center;
+    height: 45px;
     font-size: 60px;
 }
 

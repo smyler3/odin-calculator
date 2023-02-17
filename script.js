@@ -37,3 +37,11 @@ function operate(operator, num1, num2) {
         return divide(num1, num2);
     }
 }
+
+const screen = document.querySelector('#screen');
+const numberKeys = document.querySelectorAll('.num');
+console.log(numberKeys);
+numberKeys.forEach(key => key.addEventListener('click', function(e) {
+    console.log(e.target.textContent);
+    screen.textContent += e.target.textContent;
+}))
