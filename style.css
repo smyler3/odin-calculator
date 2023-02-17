@@ -1,23 +1,39 @@
 #calculatorBody {
     background-color: rgb(25, 41, 41);
+    display: flex;
+    flex-direction: column;
+    width: 500px;
+    padding: 50px;
+    gap: 20px;
 }
 
 #screen {
     background-color: mediumseagreen;
-    height: 20px;
-    width: 20px;
+    flex: 1;
 }
 
 #buttonPad {
+    flex: 1;
     display: flex;
+    justify-content: center;
+    gap: 10px;
+    background-color: aquamarine;
 }
 
 #numberPad {
+    flex: 1;
     background-color: purple;
+    border-width: 1px 0px 1px 1px;
+    border-style: solid;
+    border-color: black;
 }
 
 #operatorPad {
+    flex: 1;
     background-color: brown;
+    border-width: 1px 1px 1px 0px;
+    border-style: solid;
+    border-color: black;
 }
 
 #row {
@@ -28,12 +44,14 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    margin: 4px;
     border-width: 1px;
     border-style: solid;
     border-color: black;
 }
 
 #key {
+    flex: auto;
     height: 40px;
     width: 40px;
     background-color: aqua;
