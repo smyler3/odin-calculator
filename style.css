@@ -8,12 +8,29 @@
     width: 20px;
 }
 
+#buttonPad {
+    display: flex;
+}
+
 #numberPad {
     background-color: purple;
 }
 
 #operatorPad {
     background-color: brown;
+}
+
+#row {
+    display: flex;
+}
+
+#key {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-width: 1px;
+    border-style: solid;
+    border-color: black;
 }
 
 #key {
