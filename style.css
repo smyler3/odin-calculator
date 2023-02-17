@@ -29,7 +29,7 @@ body {
     display: flex;
     justify-content: center;
     gap: 10px;
-    background-color: aquamarine;
+    background-color: rgb(151, 141, 141);
 }
 
 #numberPad {
@@ -37,10 +37,6 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    background-color: purple;
-    border-width: 1px 0px 1px 1px;
-    border-style: solid;
-    border-color: black;
 }
 
 #operatorPad {
@@ -48,10 +44,6 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    background-color: brown;
-    border-width: 1px 1px 1px 0px;
-    border-style: solid;
-    border-color: black;
 }
 
 #row {
@@ -71,5 +63,12 @@ body {
     border-width: 1px;
     border-style: solid;
     border-color: black;
-    background-color: aqua;
+    font-size: 30px;
+    font-weight: bold;
+    color: white;
+    background-color: rgb(25, 41, 41);
+}
+
+#key.equals {
+    background-color: orangered;
 }
