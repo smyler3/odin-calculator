@@ -21,3 +21,19 @@ function divide(numerator, denominator) {
     // Division by 0
     return "ERROR";
 }
+
+// Calls an operator function on two numbers
+function operate(operator, num1, num2) {
+    if (operator === "add") {
+        return add(num1, num2);
+    }
+    else if (operator === "subtract") {
+        return subtract(num1, num2);    
+    }
+    else if (operator === "multiply") {
+        return multiply(num1, num2);
+    }
+    else if (operator === "divide") {
+        return divide(num1, num2);
+    }
+}
