@@ -18,7 +18,10 @@ body {
 #screen {
     background-color: mediumseagreen;
     flex: 1 1 auto;
-    height: 
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    font-size: 60px;
 }
 
 #buttonPad {
