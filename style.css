@@ -1,19 +1,28 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 #calculatorBody {
     background-color: rgb(25, 41, 41);
     display: flex;
     flex-direction: column;
+    justify-content: stretch;
     width: 500px;
+    height: 800px;
     padding: 50px;
     gap: 20px;
 }
 
 #screen {
     background-color: mediumseagreen;
-    flex: 1;
+    flex: 1 1 auto;
+    height: 
 }
 
 #buttonPad {
-    flex: 1;
+    flex: 3 1 auto;
     display: flex;
     justify-content: center;
     gap: 10px;
