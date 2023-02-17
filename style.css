@@ -34,6 +34,9 @@ body {
 
 #numberPad {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
     background-color: purple;
     border-width: 1px 0px 1px 1px;
     border-style: solid;
@@ -42,6 +45,9 @@ body {
 
 #operatorPad {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
     background-color: brown;
     border-width: 1px 1px 1px 0px;
     border-style: solid;
@@ -49,22 +55,21 @@ body {
 }
 
 #row {
+    flex: 1;
     display: flex;
+    align-items: stretch;
 }
 
 #key {
+    flex: 1 1 auto;
     display: flex;
     justify-content: center;
     align-items: center;
+    min-height: 40px;
+    min-width: 40px;
     margin: 4px;
     border-width: 1px;
     border-style: solid;
     border-color: black;
-}
-
-#key {
-    flex: auto;
-    height: 40px;
-    width: 40px;
     background-color: aqua;
 }
