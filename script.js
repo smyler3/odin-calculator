@@ -39,9 +39,23 @@ function operate(operator, num1, num2) {
 }
 
 const screen = document.querySelector('#screen');
+
+// Allow number keys to add text content to the screen display
 const numberKeys = document.querySelectorAll('.num');
-console.log(numberKeys);
 numberKeys.forEach(key => key.addEventListener('click', function(e) {
     console.log(e.target.textContent);
     screen.textContent += e.target.textContent;
 }))
+
+// Allow operation keys to add text content to the screen display
+const signKeys = document.querySelectorAll('.sign');
+signKeys.forEach(key => key.addEventListener('click', function(e) {
+    console.log(e.target.textContent);
+    screen.textContent += e.target.textContent;
+}))
+
+// Allow the clear key to clear the screen display
+const clear = document.querySelector('.clear');
+clear.addEventListener('click', function() {
+    screen.textContent = ''
+});
