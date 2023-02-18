@@ -60,18 +60,11 @@ function setupKeyEvents() {
 
     // Allow operation keys to add text content to the screen display
     signKeys.forEach(key => key.addEventListener('click', function(e) {
-        if (!errorFound) {
             let stopSceenPrint = checkOperator(screen.textContent, key.textContent, !operator);
-            // Displaying error
-            if (errorFound) {
-                // screen.textContent = ERROR;
-                setErrorState();
-            }
             // Displaying key pressed
-            else if (!stopSceenPrint) {
-                screen.textContent += e.target.textContent;
+            if (!stopSceenPrint) {
+                updateScreen(e.target.textContent, true);
             }
-        }
     }))
 
     // Allow the clear key to clear the screen display
@@ -86,7 +79,6 @@ function setupKeyEvents() {
 // Clears the screen and stored values
 function clearScreen() {
     screen = document.querySelector('#screen');
-    // screen.textContent = '';
     updateScreen('', false)
     num1 = null;
     operator = null;
@@ -94,12 +86,7 @@ function clearScreen() {
     errorFound = false;
 }
 
-setupKeyEvents();
-let num1 = null;
-let operator = null;
-let num2 = null;
-let errorFound = false;
-
+// Checks whether the current operator pressed is legal or not and returns whether the screen has already been changed or not
 function checkOperator(precedingText, currentOperator, isFirstOperator) {
     console.log(`initial: pre: ${precedingText}, cur: ${currentOperator}, first: ${isFirstOperator}`);
     const screen = document.querySelector('#screen');
@@ -134,7 +121,7 @@ function checkOperator(precedingText, currentOperator, isFirstOperator) {
             }
             // The current operator is being used incorrectly
             else {
-                errorFound = true;
+                setErrorState();
                 screenChanged = false;
             }
         }
@@ -143,13 +130,12 @@ function checkOperator(precedingText, currentOperator, isFirstOperator) {
                 screenChanged = true; // Do nothing as the minus cancels out the plus
             }
             else if (currentOperator === MINUS) {
-                // screen.textContent = screen.textContent.slice(0, -1) + PLUS; // The minuses cancel out
-                updateScreen(screen.textContent.slice(0, -1) + PLUS, false)
+                updateScreen(screen.textContent.slice(0, -1) + PLUS, false); // The minuses cancel out
                 screenChanged = true; 
             }
             // The current operator is being used incorrectly
-            else {
-                errorFound = true;
+            else {            
+                setErrorState();
                 screenChanged = false;
             }
         }
@@ -165,14 +151,13 @@ function checkOperator(precedingText, currentOperator, isFirstOperator) {
                 screenChanged = true; // Do nothing as the two plusses just equate to a single plus
             }
             else if (currentOperator === MINUS) {
-                // screen.textContent = screen.textContent.slice(0, -1) + MINUS;  // The minus cancels out the plus
-                updateScreen(screen.textContent.slice(0, -1) + MINUS, false)
+                updateScreen(screen.textContent.slice(0, -1) + MINUS, false); // The minus cancels out the plus
                 operator = MINUS;
                 screenChanged = true;
             }
             // The current operator is being used incorrectly
-            else {
-                errorFound = true;
+            else {              
+                setErrorState();
                 screenChanged = false;
             }
         }
@@ -181,14 +166,13 @@ function checkOperator(precedingText, currentOperator, isFirstOperator) {
                 screenChanged = true; // Do nothing as the minus cancels out the plus
             }
             else if (currentOperator === MINUS) {
-                // screen.textContent = screen.textContent.slice(0, -1) + PLUS; // The minuses cancel out
-                updateScreen(screen.textContent.slice(0, -1) + PLUS, false)
+                updateScreen(screen.textContent.slice(0, -1) + PLUS, false);  // The minuses cancel out
                 operator = PLUS;
                 screenChanged = true; 
             }
             // The current operator is being used incorrectly
-            else {
-                errorFound = true;
+            else {               
+                setErrorState();
                 screenChanged = false;
             }
         }
@@ -199,7 +183,6 @@ function checkOperator(precedingText, currentOperator, isFirstOperator) {
 
 function handleOperator(precedingText, currentOperator, isFirstOperator) {
     console.log(`handle: pre: ${precedingText}, cur: ${currentOperator}, first: ${isFirstOperator}`);
-    const screen = document.querySelector('#screen');
     let parsedNum = Number.parseFloat(precedingText);
     let screenChanged = false;
 
@@ -211,12 +194,9 @@ function handleOperator(precedingText, currentOperator, isFirstOperator) {
     // Subsequent operator called
     else {
         num1 = operate(operator, num1, parsedNum);
-        // screen.textContent = num1;
-        updateScreen(num1, false)
         updateScreen(num1, false)
         // For divisions by 0 
         if (num1 !== ERROR) {
-            // screen.textContent += currentOperator;
             updateScreen(currentOperator, true)
         }
         screenChanged = true;
@@ -226,12 +206,6 @@ function handleOperator(precedingText, currentOperator, isFirstOperator) {
     return screenChanged;
 }
 
-/*
-    TODO: End the error state on screen as soon as another key has been pressed unless it's also an error?
-function errorState() {
-
-}
-*/
 function handleEquals(isFirstOperator) {
     const screen = document.querySelector('#screen');
     let precedingText = screen.textContent.replace((num1 + operator), ''); 
@@ -241,24 +215,23 @@ function handleEquals(isFirstOperator) {
     if (!isFirstOperator) {
         if (!isNaN(parsedNum)) {
             num1 = operate(operator, num1, parsedNum);
-            // screen.textContent = num1;
             updateScreen(num1, false)
             operator = null;
             num2 = null;
         }
-        else {
-            // screen.textContent = ERROR;  
+        else { 
             setErrorState();
         }
     }
     else {
-        // screen.textContent = ERROR;
         setErrorState();
     }
 }
 
+// Changes the screens display by adding or replacing
 function updateScreen(newText, addText) {
     screen = document.querySelector('#screen');
+    console.log(`Screen: ${screen.textContent}`);
     if (screen.textContent === ERROR) {
         screen.textContent = newText;
     }
@@ -270,14 +243,19 @@ function updateScreen(newText, addText) {
     }
 }
 
-
+// Wipes data and displays error on scren
 function setErrorState() {
     screen = document.querySelector('#screen');
     clearScreen()
-    setErrorState();
+    updateScreen(ERROR, false)
 }
 
 
+setupKeyEvents();
+let num1 = null;
+let operator = null;
+let num2 = null;
+let errorFound = false;
 
 
 
