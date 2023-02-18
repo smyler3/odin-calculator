@@ -82,7 +82,9 @@ function setupKeyEvents() {
     });
 
     // Allow the equals key to run equations
-    equal.addEventListener('click', handleEquals);
+    equal.addEventListener('click', function() {
+        handleEquals(!operator);
+    });
 }
 
 setupKeyEvents();
@@ -216,9 +218,6 @@ function errorState() {
 
 }
 */
-
-// TODO: When adding logic for equals it can just try to Number.parseInt(textContent.replace(num1 + operator) and if it fails an error was made)
-//       It will also needs it's own handleOperator function called handleEquals()
 function handleEquals(isFirstOperator) {
     const screen = document.querySelector('#screen');
     let precedingText = screen.textContent.replace((num1 + operator), ''); 
@@ -228,6 +227,9 @@ function handleEquals(isFirstOperator) {
     if (!isFirstOperator) {
         if (!isNaN(parsedNum)) {
             num1 = operate(operator, num1, parsedNum);
+            screen.textContent = num1;
+            operator = null;
+            num2 = null;
         }
         else {
             screen.textContent = ERROR;  
