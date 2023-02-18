@@ -54,8 +54,8 @@ function setupKeyEvents() {
 
     // Allow number keys to add text content to the screen display
     numberKeys.forEach(key => key.addEventListener('click', function(e) {
-        screen.textContent += e.target.textContent;
-        // updateScreen(e.target.textContent);
+        // screen.textContent += e.target.textContent;
+        updateScreen(e.target.textContent, true);
     }))
 
     // Allow operation keys to add text content to the screen display
@@ -64,7 +64,8 @@ function setupKeyEvents() {
             let stopSceenPrint = checkOperator(screen.textContent, key.textContent, !operator);
             // Displaying error
             if (errorFound) {
-                screen.textContent = ERROR;
+                // screen.textContent = ERROR;
+                setErrorState();
             }
             // Displaying key pressed
             else if (!stopSceenPrint) {
@@ -85,7 +86,8 @@ function setupKeyEvents() {
 // Clears the screen and stored values
 function clearScreen() {
     screen = document.querySelector('#screen');
-    screen.textContent = '';
+    // screen.textContent = '';
+    updateScreen('', false)
     num1 = null;
     operator = null;
     num2 = null;
@@ -126,7 +128,8 @@ function checkOperator(precedingText, currentOperator, isFirstOperator) {
                 screenChanged = true; // Do nothing as the two plusses just equate to a single plus
             }
             else if (currentOperator === MINUS) {
-                screen.textContent = screen.textContent.slice(0, -1) + MINUS;  // The minus cancels out the plus
+                // screen.textContent = screen.textContent.slice(0, -1) + MINUS;  // The minus cancels out the plus
+                updateScreen(screen.textContent.slice(0, -1) + MINUS, false)
                 screenChanged = true;
             }
             // The current operator is being used incorrectly
@@ -140,7 +143,8 @@ function checkOperator(precedingText, currentOperator, isFirstOperator) {
                 screenChanged = true; // Do nothing as the minus cancels out the plus
             }
             else if (currentOperator === MINUS) {
-                screen.textContent = screen.textContent.slice(0, -1) + PLUS; // The minuses cancel out
+                // screen.textContent = screen.textContent.slice(0, -1) + PLUS; // The minuses cancel out
+                updateScreen(screen.textContent.slice(0, -1) + PLUS, false)
                 screenChanged = true; 
             }
             // The current operator is being used incorrectly
@@ -161,7 +165,8 @@ function checkOperator(precedingText, currentOperator, isFirstOperator) {
                 screenChanged = true; // Do nothing as the two plusses just equate to a single plus
             }
             else if (currentOperator === MINUS) {
-                screen.textContent = screen.textContent.slice(0, -1) + MINUS;  // The minus cancels out the plus
+                // screen.textContent = screen.textContent.slice(0, -1) + MINUS;  // The minus cancels out the plus
+                updateScreen(screen.textContent.slice(0, -1) + MINUS, false)
                 operator = MINUS;
                 screenChanged = true;
             }
@@ -176,7 +181,8 @@ function checkOperator(precedingText, currentOperator, isFirstOperator) {
                 screenChanged = true; // Do nothing as the minus cancels out the plus
             }
             else if (currentOperator === MINUS) {
-                screen.textContent = screen.textContent.slice(0, -1) + PLUS; // The minuses cancel out
+                // screen.textContent = screen.textContent.slice(0, -1) + PLUS; // The minuses cancel out
+                updateScreen(screen.textContent.slice(0, -1) + PLUS, false)
                 operator = PLUS;
                 screenChanged = true; 
             }
@@ -205,10 +211,13 @@ function handleOperator(precedingText, currentOperator, isFirstOperator) {
     // Subsequent operator called
     else {
         num1 = operate(operator, num1, parsedNum);
-        screen.textContent = num1;
+        // screen.textContent = num1;
+        updateScreen(num1, false)
+        updateScreen(num1, false)
         // For divisions by 0 
         if (num1 !== ERROR) {
-            screen.textContent += currentOperator;
+            // screen.textContent += currentOperator;
+            updateScreen(currentOperator, true)
         }
         screenChanged = true;
     }
@@ -232,16 +241,19 @@ function handleEquals(isFirstOperator) {
     if (!isFirstOperator) {
         if (!isNaN(parsedNum)) {
             num1 = operate(operator, num1, parsedNum);
-            screen.textContent = num1;
+            // screen.textContent = num1;
+            updateScreen(num1, false)
             operator = null;
             num2 = null;
         }
         else {
-            screen.textContent = ERROR;  
+            // screen.textContent = ERROR;  
+            setErrorState();
         }
     }
     else {
-        screen.textContent = ERROR;
+        // screen.textContent = ERROR;
+        setErrorState();
     }
 }
 
@@ -262,7 +274,7 @@ function updateScreen(newText, addText) {
 function setErrorState() {
     screen = document.querySelector('#screen');
     clearScreen()
-    screen.textContent === ERROR;
+    setErrorState();
 }
 
 
