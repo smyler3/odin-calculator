@@ -1,3 +1,8 @@
+const PLUS = '+';
+const MINUS = '-';
+const TIMES = '*';
+const DIVIDE = '/';
+
 // Adds two numbers
 function add(num1, num2) {
     return num1 + num2;
@@ -62,15 +67,14 @@ function setupKeyEvents() {
 }
 
 setupKeyEvents();
-const num1 = null;
-const operator = null;
-const num2 = null;
+let num1 = null;
+let operator = null;
+let num2 = null;
 
 // TODO: Check if the error boolean is true or not before even bothering to run these checks
 // TODO: Minus (the previous num + the current operator) from the current text to isolate only new entries (Hopefully the potential new number) as the screenText arg
-function checkOperator(precedingText, currentOperator, firstOperator) {
-    const PLUS = '+';
-    const MINUS = '-';
+// TODO: What should this function return, how to handle errors/cancelling out etc
+function checkOperator(precedingText, currentOperator, isFirstOperator) {
     const ERROR = "ERROR";
     const screenText = document.querySelector('#screen');
 
@@ -81,7 +85,7 @@ function checkOperator(precedingText, currentOperator, firstOperator) {
                 // Do nothing as the two plusses just equate to a single plus
             }
             else if (currentOperator === MINUS) {
-                screenText.textContent = MINUS; // The minus cancels out the plus
+                return MINUS; // The minus cancels out the plus
             }
             // The current operator is being used incorrectly
             else {
@@ -94,7 +98,7 @@ function checkOperator(precedingText, currentOperator, firstOperator) {
                 // Do nothing as the minus cancels out the plus
             }
             else if (currentOperator === MINUS) {
-                screenText.textContent = PLUS; // The minuses cancel out
+                return PLUS; // The minuses cancel out
             }
             // The current operator is being used incorrectly
             else {
@@ -103,7 +107,7 @@ function checkOperator(precedingText, currentOperator, firstOperator) {
             }
         }
         else {
-            if (firstOperator) {
+            if (isFirstOperator) {
                 // ***
                 // Parse the number
                 // Store the current operator for next maths
@@ -130,6 +134,32 @@ function checkOperator(precedingText, currentOperator, firstOperator) {
     }
 }
 
+function handleOperator(preceedingText, currentOperator, isFirstOperator) {
+    let parsedNum = Number.parseInt(preceedingText);
+    if (isFirstOperator) {
+        // TODO: Check how to enter arguments into a function stored in an objectstop Javascript (This is my best guess lol)
+        // Store parsedNum as num1
+        num1 = operators[operator](num1, parsedNum);
+    }
+    else {
+        // Do maths with num1 <storedOperator> parsedNum
+        // Store the result as num1
+        if (currentOperator === PLUS) {
+            num1 = add(num1);
+        }
+        if (currentOperator === MINUS) {
+            num1 = subtract(num1);
+        }
+        if (currentOperator === TIMES) {
+            num1 = multiply(num1);
+        }
+        if (currentOperator === DIVIDE) {
+            num1 = divide(num1);
+        }
+    }
+
+    currentOperator = operator;
+}
 
 
 
