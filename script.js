@@ -29,16 +29,16 @@ function divide(numerator, denominator) {
 
 // Calls an operator function on two numbers
 function operate(operator, num1, num2) {
-    if (operator === "add") {
+    if (operator === PLUS) {
         return add(num1, num2);
     }
-    else if (operator === "subtract") {
+    else if (operator === MINUS) {
         return subtract(num1, num2);    
     }
-    else if (operator === "multiply") {
+    else if (operator === TIMES) {
         return multiply(num1, num2);
     }
-    else if (operator === "divide") {
+    else if (operator === DIVIDE) {
         return divide(num1, num2);
     }
 }
@@ -57,12 +57,21 @@ function setupKeyEvents() {
 
     // Allow operation keys to add text content to the screen display
     signKeys.forEach(key => key.addEventListener('click', function(e) {
-        screen.textContent += e.target.textContent;
+        if (errorFound === false) {
+            let stopSceenPrint = checkOperator(screen.textContent, key.textContent, !operator);
+            if (!stopSceenPrint) {
+                screen.textContent += e.target.textContent;
+            }
+        }
     }))
 
     // Allow the clear key to clear the screen display
     clear.addEventListener('click', function() {
         screen.textContent = '';
+        num1 = null;
+        operator = null;
+        num2 = null;
+        errorFound = false;
     });
 }
 
@@ -70,95 +79,89 @@ setupKeyEvents();
 let num1 = null;
 let operator = null;
 let num2 = null;
+let errorFound = false;
 
-// TODO: Check if the error boolean is true or not before even bothering to run these checks
-// TODO: Minus (the previous num + the current operator) from the current text to isolate only new entries (Hopefully the potential new number) as the screenText arg
-// TODO: What should this function return, how to handle errors/cancelling out etc
 function checkOperator(precedingText, currentOperator, isFirstOperator) {
-    const ERROR = "ERROR";
-    const screenText = document.querySelector('#screen');
+    console.log(`initial: pre: ${precedingText}, cur: ${currentOperator}, first: ${isFirstOperator}`);
+    // const ERROR = "ERROR";
+    const screen = document.querySelector('#screen');
+    let screenChanged = false;
 
-    if (screenText) {
+    // Isolating only non-recorded entry data
+    if (!isFirstOperator) {
+        precedingText = screen.textContent.replace((num1 + operator), ''); 
+    }
+
+    console.log(`post: pre: ${precedingText}, cur: ${currentOperator}, first: ${isFirstOperator}`);
+
+    if (precedingText) {
         // Checking if the preeceeding text is a +/- operator
         if (precedingText === PLUS) {
             if (currentOperator === PLUS) {
-                // Do nothing as the two plusses just equate to a single plus
+                screenChanged = true; // Do nothing as the two plusses just equate to a single plus
             }
             else if (currentOperator === MINUS) {
-                return MINUS; // The minus cancels out the plus
+                screen.textContent = screen.textContent.slice(0, -1) + MINUS;  // The minus cancels out the plus
+                screenChanged = true;
             }
             // The current operator is being used incorrectly
             else {
-                // TODO: Set error boolean to true
-                return ERROR;
+                errorFound = true;
+                screenChanged = false;
             }
         }
         else if (precedingText === MINUS) {
             if (currentOperator === PLUS) {
-                // Do nothing as the minus cancels out the plus
+                screenChanged = true; // Do nothing as the minus cancels out the plus
             }
             else if (currentOperator === MINUS) {
-                return PLUS; // The minuses cancel out
+                screen.textContent = screen.textContent.slice(0, -1); // The minuses cancel out
+                screenChanged = true; 
             }
             // The current operator is being used incorrectly
             else {
-                // TODO: Set error boolean to true
-                return ERROR;
+                errorFound = true;
+                screenChanged = false;
             }
         }
         else {
-            if (isFirstOperator) {
-                // ***
-                // Parse the number
-                // Store the current operator for next maths
-                // ***
-            }
-            else {
-                // ***
-                // Parse the number
-                // Do the maths with the previous result, previous operator, and the parsed number
-                // Store the current operator for next maths
-                // ***    
-            }
+            screenChanged = handleOperator(precedingText, currentOperator, isFirstOperator);
         }
     }
     else {
         if (currentOperator === MINUS || currentOperator === PLUS) {
-            // Do nothing as this could be a sign for a number
+            screenChanged = false; // Do nothing as this could be a sign for a number
         }
         // The current operator is being used incorrectly
         else {
-            // Set error boolean to true
-            return ERROR;
+            errorFound = true;
+            screenChanged = false;
         }
     }
+
+    return screenChanged;
 }
 
-function handleOperator(preceedingText, currentOperator, isFirstOperator) {
-    let parsedNum = Number.parseInt(preceedingText);
+function handleOperator(precedingText, currentOperator, isFirstOperator) {
+    console.log(`handle: pre: ${precedingText}, cur: ${currentOperator}, first: ${isFirstOperator}`);
+    const screen = document.querySelector('#screen');
+    let parsedNum = Number.parseInt(precedingText);
+    let screenChanged = false;
+
+    // First operator called
     if (isFirstOperator) {
-        // TODO: Check how to enter arguments into a function stored in an objectstop Javascript (This is my best guess lol)
-        // Store parsedNum as num1
-        num1 = operators[operator](num1, parsedNum);
+        num1 = parsedNum;
+        console.log(`handle: parsed number: ${parsedNum}`);
     }
+    // Subsequent operator called
     else {
-        // Do maths with num1 <storedOperator> parsedNum
-        // Store the result as num1
-        if (currentOperator === PLUS) {
-            num1 = add(num1);
-        }
-        if (currentOperator === MINUS) {
-            num1 = subtract(num1);
-        }
-        if (currentOperator === TIMES) {
-            num1 = multiply(num1);
-        }
-        if (currentOperator === DIVIDE) {
-            num1 = divide(num1);
-        }
+        num1 = operate(operator, num1, parsedNum);
+        screen.textContent = num1 + currentOperator;
+        screenChanged = true;
     }
 
-    currentOperator = operator;
+    operator = currentOperator;
+    return screenChanged;
 }
 
 
