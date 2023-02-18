@@ -21,8 +21,9 @@ body {
     display: flex;
     justify-content: end;
     align-items: center;
+    padding: 25px;
     height: 45px;
-    font-size: 60px;
+    font-size: 90px;
 }
 
 #buttonPad {
