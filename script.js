@@ -4,6 +4,108 @@ const TIMES = '*';
 const DIVIDE = '/';
 const ERROR = "ERROR";
 
+// Adds the event listeners for the calculator keys
+function setupKeyEvents() {
+    const screen = document.querySelector('#screen');
+    const numberKeys = document.querySelectorAll('.num');
+    const signKeys = document.querySelectorAll('.sign');
+    const clear = document.querySelector('.clear');
+    const equal = document.querySelector('.equals');
+
+    
+    // Allow number keys to add text content to the screen display
+    numberKeys.forEach(key => key.addEventListener('click', function(e) {
+        updateScreen(e.target.textContent, true);
+    }))
+
+    // Allow the clear key to clear the screen display
+    clear.addEventListener('click', clearScreen);
+
+    // Allow the equals key to run equations
+    equal.addEventListener('click', function() {
+        handleEquals(!operator);
+    });
+
+    // Allow operation keys to add text content to the screen display
+    signKeys.forEach(key => key.addEventListener('click', function(e) {
+            let stopSceenPrint = checkOperator(screen.textContent, key.textContent, !operator);
+            // Displaying key pressed
+            if (!stopSceenPrint) {
+                updateScreen(e.target.textContent, true);
+            }
+    }))
+}
+
+// Changes the screens display by adding or replacing text
+function updateScreen(newText, addText) {
+    screen = document.querySelector('#screen');
+    console.log(`Screen: ${screen.textContent}`);
+    if (screen.textContent === ERROR) {
+        screen.textContent = newText;
+    }
+    else if (addText) {
+        screen.textContent += newText;
+    }
+    else {
+        screen.textContent = newText;
+    }
+}
+
+// Clears the screen and stored values
+function clearScreen() {
+    screen = document.querySelector('#screen');
+    updateScreen('', false)
+    num1 = null;
+    operator = null;
+    num2 = null;
+    errorFound = false;
+}
+
+// Handles the mathematical logic when the equals key is pressed
+function handleEquals(isFirstOperator) {
+    const screen = document.querySelector('#screen');
+    let precedingText = screen.textContent.replace((num1 + operator), ''); 
+    let parsedNum = Number.parseFloat(precedingText);
+    console.log(`equals: pre: ${precedingText}, operator: ${operator}, first: ${isFirstOperator}, par${parsedNum}`);
+
+    if (!isFirstOperator) {
+        if (!isNaN(parsedNum)) {
+            num1 = operate(operator, num1, parsedNum);
+            // For divisions by 0 
+            if (num1 !== ERROR) {
+                updateScreen(num1, false)
+                operator = null;
+                num2 = null;
+            }
+            else {
+                setErrorState();
+            }
+        }
+        else { 
+            setErrorState();
+        }
+    }
+    else {
+        setErrorState();
+    }
+}
+
+// Calls an operator function on two numbers
+function operate(operator, num1, num2) {
+    if (operator === PLUS) {
+        return add(num1, num2);
+    }
+    else if (operator === MINUS) {
+        return subtract(num1, num2);    
+    }
+    else if (operator === TIMES) {
+        return multiply(num1, num2);
+    }
+    else if (operator === DIVIDE) {
+        return divide(num1, num2);
+    }
+}
+
 // Adds two numbers
 function add(num1, num2) {
     return num1 + num2;
@@ -28,65 +130,14 @@ function divide(numerator, denominator) {
     return "ERROR";
 }
 
-// Calls an operator function on two numbers
-function operate(operator, num1, num2) {
-    if (operator === PLUS) {
-        return add(num1, num2);
-    }
-    else if (operator === MINUS) {
-        return subtract(num1, num2);    
-    }
-    else if (operator === TIMES) {
-        return multiply(num1, num2);
-    }
-    else if (operator === DIVIDE) {
-        return divide(num1, num2);
-    }
-}
-
-// Adds the event listeners for the calculator keys
-function setupKeyEvents() {
-    const screen = document.querySelector('#screen');
-    const numberKeys = document.querySelectorAll('.num');
-    const signKeys = document.querySelectorAll('.sign');
-    const clear = document.querySelector('.clear');
-    const equal = document.querySelector('.equals');
-
-    // Allow number keys to add text content to the screen display
-    numberKeys.forEach(key => key.addEventListener('click', function(e) {
-        // screen.textContent += e.target.textContent;
-        updateScreen(e.target.textContent, true);
-    }))
-
-    // Allow operation keys to add text content to the screen display
-    signKeys.forEach(key => key.addEventListener('click', function(e) {
-            let stopSceenPrint = checkOperator(screen.textContent, key.textContent, !operator);
-            // Displaying key pressed
-            if (!stopSceenPrint) {
-                updateScreen(e.target.textContent, true);
-            }
-    }))
-
-    // Allow the clear key to clear the screen display
-    clear.addEventListener('click', clearScreen);
-
-    // Allow the equals key to run equations
-    equal.addEventListener('click', function() {
-        handleEquals(!operator);
-    });
-}
-
-// Clears the screen and stored values
-function clearScreen() {
+// Wipes data and displays error on scren
+function setErrorState() {
     screen = document.querySelector('#screen');
-    updateScreen('', false)
-    num1 = null;
-    operator = null;
-    num2 = null;
-    errorFound = false;
+    clearScreen()
+    updateScreen(ERROR, false)
 }
 
-// Checks whether the current operator pressed is legal or not and returns whether the screen has already been changed or not
+// Checks whether the current operator pressed is legal and returns whether the screen has already been changed or not
 function checkOperator(precedingText, currentOperator, isFirstOperator) {
     console.log(`initial: pre: ${precedingText}, cur: ${currentOperator}, first: ${isFirstOperator}`);
     const screen = document.querySelector('#screen');
@@ -181,6 +232,7 @@ function checkOperator(precedingText, currentOperator, isFirstOperator) {
     return screenChanged;
 }
 
+// Handles mathematical logic when an operator key is pressed
 function handleOperator(precedingText, currentOperator, isFirstOperator) {
     console.log(`handle: pre: ${precedingText}, cur: ${currentOperator}, first: ${isFirstOperator}`);
     let parsedNum = Number.parseFloat(precedingText);
@@ -199,6 +251,9 @@ function handleOperator(precedingText, currentOperator, isFirstOperator) {
         if (num1 !== ERROR) {
             updateScreen(currentOperator, true)
         }
+        else {
+            setErrorState();
+        }
         screenChanged = true;
     }
 
@@ -206,107 +261,8 @@ function handleOperator(precedingText, currentOperator, isFirstOperator) {
     return screenChanged;
 }
 
-function handleEquals(isFirstOperator) {
-    const screen = document.querySelector('#screen');
-    let precedingText = screen.textContent.replace((num1 + operator), ''); 
-    let parsedNum = Number.parseFloat(precedingText);
-    console.log(`equals: pre: ${precedingText}, operator: ${operator}, first: ${isFirstOperator}, par${parsedNum}`);
-
-    if (!isFirstOperator) {
-        if (!isNaN(parsedNum)) {
-            num1 = operate(operator, num1, parsedNum);
-            updateScreen(num1, false)
-            operator = null;
-            num2 = null;
-        }
-        else { 
-            setErrorState();
-        }
-    }
-    else {
-        setErrorState();
-    }
-}
-
-// Changes the screens display by adding or replacing
-function updateScreen(newText, addText) {
-    screen = document.querySelector('#screen');
-    console.log(`Screen: ${screen.textContent}`);
-    if (screen.textContent === ERROR) {
-        screen.textContent = newText;
-    }
-    else if (addText) {
-        screen.textContent += newText;
-    }
-    else {
-        screen.textContent = newText;
-    }
-}
-
-// Wipes data and displays error on scren
-function setErrorState() {
-    screen = document.querySelector('#screen');
-    clearScreen()
-    updateScreen(ERROR, false)
-}
-
-
 setupKeyEvents();
 let num1 = null;
 let operator = null;
 let num2 = null;
 let errorFound = false;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // If it isn't:
-        // (Minus the previous text + the current operator) from the current text to isolate only new entries (Hopefully the potential new number)
-        // TODO: Mostly everything below here is identical to above so figure out some nuance maybe have a function that if it gets to the only differing code
-        // (the sections marked with ***) then run that differing code through a different function
-
-        // Check if there is any preeceeding text
-        // If there is:
-            // Check if it's a +/- operator
-            // If it is:
-                // Check if the current operator is a +/-
-                // If it is:
-                    // Solve the sign
-                // If it isn't:
-                    // ERROR: This current operator is being used incorrectly so set an error boolean to true;
-            // If it isn't:
-                // ***
-                // Parse the number
-                // Do the maths with the previous result, previous operator, and the parsed number
-                // Store the current operator for next maths
-                // ***
-        // If there isn't:
-            // Check if this operator is a +/-
-            // If it is:
-                // Do nothing as this could be a sign for a number
-            // If it isn't:
-                // ERROR: This current operator is being used incorrectly so set an error boolean to true;
