@@ -40,11 +40,8 @@ function setupKeyEvents() {
 function updateScreen(newText, addText) {
     screen = document.querySelector('#screen');
     console.log(`Screen: ${screen.textContent}`);
-    if (screen.textContent === ERROR) {
-        screen.textContent = newText;
-    }
-    else if (addText) {
-        screen.textContent += newText;
+    if (addText) {
+       screen.textContent += newText; 
     }
     else {
         screen.textContent = newText;
@@ -53,7 +50,6 @@ function updateScreen(newText, addText) {
 
 // Clears the screen and stored values
 function clearScreen() {
-    screen = document.querySelector('#screen');
     updateScreen('', false)
     num1 = null;
     operator = null;
@@ -132,7 +128,6 @@ function divide(numerator, denominator) {
 
 // Wipes data and displays error on scren
 function setErrorState() {
-    screen = document.querySelector('#screen');
     clearScreen()
     updateScreen(ERROR, false)
 }
@@ -166,8 +161,7 @@ function checkOperator(precedingText, currentOperator, isFirstOperator) {
                 screenChanged = true; // Do nothing as the two plusses just equate to a single plus
             }
             else if (currentOperator === MINUS) {
-                // screen.textContent = screen.textContent.slice(0, -1) + MINUS;  // The minus cancels out the plus
-                updateScreen(screen.textContent.slice(0, -1) + MINUS, false)
+                updateScreen(screen.textContent.slice(0, -1) + MINUS, false); // The minus cancels out the plus
                 screenChanged = true;
             }
             // The current operator is being used incorrectly
