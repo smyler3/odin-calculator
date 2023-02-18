@@ -55,6 +55,7 @@ function setupKeyEvents() {
     // Allow number keys to add text content to the screen display
     numberKeys.forEach(key => key.addEventListener('click', function(e) {
         screen.textContent += e.target.textContent;
+        // updateScreen(e.target.textContent);
     }))
 
     // Allow operation keys to add text content to the screen display
@@ -73,18 +74,22 @@ function setupKeyEvents() {
     }))
 
     // Allow the clear key to clear the screen display
-    clear.addEventListener('click', function() {
-        screen.textContent = '';
-        num1 = null;
-        operator = null;
-        num2 = null;
-        errorFound = false;
-    });
+    clear.addEventListener('click', clearScreen);
 
     // Allow the equals key to run equations
     equal.addEventListener('click', function() {
         handleEquals(!operator);
     });
+}
+
+// Clears the screen and stored values
+function clearScreen() {
+    screen = document.querySelector('#screen');
+    screen.textContent = '';
+    num1 = null;
+    operator = null;
+    num2 = null;
+    errorFound = false;
 }
 
 setupKeyEvents();
@@ -189,7 +194,7 @@ function checkOperator(precedingText, currentOperator, isFirstOperator) {
 function handleOperator(precedingText, currentOperator, isFirstOperator) {
     console.log(`handle: pre: ${precedingText}, cur: ${currentOperator}, first: ${isFirstOperator}`);
     const screen = document.querySelector('#screen');
-    let parsedNum = Number.parseInt(precedingText);
+    let parsedNum = Number.parseFloat(precedingText);
     let screenChanged = false;
 
     // First operator called
@@ -221,8 +226,8 @@ function errorState() {
 function handleEquals(isFirstOperator) {
     const screen = document.querySelector('#screen');
     let precedingText = screen.textContent.replace((num1 + operator), ''); 
-    let parsedNum = Number.parseInt(precedingText);
-    console.log(`equals: pre: ${precedingText}, operator: ${operator}, first: ${isFirstOperator}`);
+    let parsedNum = Number.parseFloat(precedingText);
+    console.log(`equals: pre: ${precedingText}, operator: ${operator}, first: ${isFirstOperator}, par${parsedNum}`);
 
     if (!isFirstOperator) {
         if (!isNaN(parsedNum)) {
@@ -239,6 +244,27 @@ function handleEquals(isFirstOperator) {
         screen.textContent = ERROR;
     }
 }
+
+function updateScreen(newText, addText) {
+    screen = document.querySelector('#screen');
+    if (screen.textContent === ERROR) {
+        screen.textContent = newText;
+    }
+    else if (addText) {
+        screen.textContent += newText;
+    }
+    else {
+        screen.textContent = newText;
+    }
+}
+
+
+function setErrorState() {
+    screen = document.querySelector('#screen');
+    clearScreen()
+    screen.textContent === ERROR;
+}
+
 
 
 
