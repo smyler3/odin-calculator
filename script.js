@@ -163,7 +163,10 @@ function handleOperator(precedingText, currentOperator, isFirstOperator) {
     // Subsequent operator called
     else {
         num1 = operate(operator, num1, parsedNum);
-        screen.textContent = num1 + currentOperator;
+        screen.textContent = num1;
+        // For divisions by 0 
+        if (num1 !== ERROR) {
+            screen.textContent += currentOperator;
         screenChanged = true;
     }
 
