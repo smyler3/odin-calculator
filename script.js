@@ -2,6 +2,7 @@ const PLUS = '+';
 const MINUS = '-';
 const TIMES = '*';
 const DIVIDE = '/';
+const ERROR = "ERROR";
 
 // Adds two numbers
 function add(num1, num2) {
@@ -57,9 +58,14 @@ function setupKeyEvents() {
 
     // Allow operation keys to add text content to the screen display
     signKeys.forEach(key => key.addEventListener('click', function(e) {
-        if (errorFound === false) {
+        if (!errorFound) {
             let stopSceenPrint = checkOperator(screen.textContent, key.textContent, !operator);
-            if (!stopSceenPrint) {
+            // Displaying error
+            if (errorFound) {
+                screen.textContent = ERROR;
+            }
+            // Displaying key pressed
+            else if (!stopSceenPrint) {
                 screen.textContent += e.target.textContent;
             }
         }
@@ -83,7 +89,6 @@ let errorFound = false;
 
 function checkOperator(precedingText, currentOperator, isFirstOperator) {
     console.log(`initial: pre: ${precedingText}, cur: ${currentOperator}, first: ${isFirstOperator}`);
-    // const ERROR = "ERROR";
     const screen = document.querySelector('#screen');
     let screenChanged = false;
 
@@ -125,7 +130,9 @@ function checkOperator(precedingText, currentOperator, isFirstOperator) {
             }
         }
         else {
-            screenChanged = handleOperator(precedingText, currentOperator, isFirstOperator);
+            if (!errorFound) {
+                screenChanged = handleOperator(precedingText, currentOperator, isFirstOperator);
+            }
         }
     }
     else {
