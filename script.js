@@ -50,6 +50,7 @@ function setupKeyEvents() {
     const numberKeys = document.querySelectorAll('.num');
     const signKeys = document.querySelectorAll('.sign');
     const clear = document.querySelector('.clear');
+    const equal = document.querySelector('.equals');
 
     // Allow number keys to add text content to the screen display
     numberKeys.forEach(key => key.addEventListener('click', function(e) {
@@ -79,6 +80,9 @@ function setupKeyEvents() {
         num2 = null;
         errorFound = false;
     });
+
+    // Allow the equals key to run equations
+    equal.addEventListener('click', handleEquals);
 }
 
 setupKeyEvents();
@@ -91,17 +95,26 @@ function checkOperator(precedingText, currentOperator, isFirstOperator) {
     console.log(`initial: pre: ${precedingText}, cur: ${currentOperator}, first: ${isFirstOperator}`);
     const screen = document.querySelector('#screen');
     let screenChanged = false;
+    let lastChar = '';
 
     // Isolating only non-recorded entry data
     if (!isFirstOperator) {
         precedingText = screen.textContent.replace((num1 + operator), ''); 
     }
 
-    console.log(`post: pre: ${precedingText}, cur: ${currentOperator}, first: ${isFirstOperator}`);
+    // Grabbing the last available character 
+    if (!precedingText) {
+        lastChar = screen.textContent.slice(-1);
+    }
+    else {
+        lastChar = precedingText.slice(-1);
+    }
+
+    console.log(`post: pre: ${precedingText}, cur: ${currentOperator}, first: ${isFirstOperator}, last: ${lastChar}`);
 
     if (precedingText) {
         // Checking if the preeceeding text is a +/- operator
-        if (precedingText === PLUS) {
+        if (lastChar === PLUS) {
             if (currentOperator === PLUS) {
                 screenChanged = true; // Do nothing as the two plusses just equate to a single plus
             }
@@ -115,12 +128,12 @@ function checkOperator(precedingText, currentOperator, isFirstOperator) {
                 screenChanged = false;
             }
         }
-        else if (precedingText === MINUS) {
+        else if (lastChar === MINUS) {
             if (currentOperator === PLUS) {
                 screenChanged = true; // Do nothing as the minus cancels out the plus
             }
             else if (currentOperator === MINUS) {
-                screen.textContent = screen.textContent.slice(0, -1); // The minuses cancel out
+                screen.textContent = screen.textContent.slice(0, -1) + PLUS; // The minuses cancel out
                 screenChanged = true; 
             }
             // The current operator is being used incorrectly
@@ -136,13 +149,35 @@ function checkOperator(precedingText, currentOperator, isFirstOperator) {
         }
     }
     else {
-        if (currentOperator === MINUS || currentOperator === PLUS) {
-            screenChanged = false; // Do nothing as this could be a sign for a number
+        if (lastChar === PLUS) {
+            if (currentOperator === PLUS) {
+                screenChanged = true; // Do nothing as the two plusses just equate to a single plus
+            }
+            else if (currentOperator === MINUS) {
+                screen.textContent = screen.textContent.slice(0, -1) + MINUS;  // The minus cancels out the plus
+                operator = MINUS;
+                screenChanged = true;
+            }
+            // The current operator is being used incorrectly
+            else {
+                errorFound = true;
+                screenChanged = false;
+            }
         }
-        // The current operator is being used incorrectly
-        else {
-            errorFound = true;
-            screenChanged = false;
+        else if (lastChar === MINUS) {
+            if (currentOperator === PLUS) {
+                screenChanged = true; // Do nothing as the minus cancels out the plus
+            }
+            else if (currentOperator === MINUS) {
+                screen.textContent = screen.textContent.slice(0, -1) + PLUS; // The minuses cancel out
+                operator = PLUS;
+                screenChanged = true; 
+            }
+            // The current operator is being used incorrectly
+            else {
+                errorFound = true;
+                screenChanged = false;
+            }
         }
     }
 
@@ -173,6 +208,34 @@ function handleOperator(precedingText, currentOperator, isFirstOperator) {
 
     operator = currentOperator;
     return screenChanged;
+}
+
+/*
+    TODO: End the error state on screen as soon as another key has been pressed unless it's also an error?
+function errorState() {
+
+}
+*/
+
+// TODO: When adding logic for equals it can just try to Number.parseInt(textContent.replace(num1 + operator) and if it fails an error was made)
+//       It will also needs it's own handleOperator function called handleEquals()
+function handleEquals(isFirstOperator) {
+    const screen = document.querySelector('#screen');
+    let precedingText = screen.textContent.replace((num1 + operator), ''); 
+    let parsedNum = Number.parseInt(precedingText);
+    console.log(`equals: pre: ${precedingText}, operator: ${operator}, first: ${isFirstOperator}`);
+
+    if (!isFirstOperator) {
+        if (!isNaN(parsedNum)) {
+            num1 = operate(operator, num1, parsedNum);
+        }
+        else {
+            screen.textContent = ERROR;  
+        }
+    }
+    else {
+        screen.textContent = ERROR;
+    }
 }
 
 
