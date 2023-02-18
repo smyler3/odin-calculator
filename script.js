@@ -67,31 +67,94 @@ const operator = null;
 const num2 = null;
 
 // TODO: Check if the error boolean is true or not before even bothering to run these checks
-// function checkOperatorStatus(screenText, operator, first?) {
-    // TODO: Checking if the current operator is +/- is done twice so make a variable for it
+// TODO: Minus (the previous num + the current operator) from the current text to isolate only new entries (Hopefully the potential new number) as the screenText arg
+function checkOperator(precedingText, currentOperator, firstOperator) {
+    const PLUS = '+';
+    const MINUS = '-';
+    const ERROR = "ERROR";
+    const screenText = document.querySelector('#screen');
 
-    // Check if this is the first operator accepted
-    // If it is:
-        // Check if there is any preeceeding text
-        // If there is:
-            // Check if it's a +/- operator
-            // If it is:
-                // Check if the current operator is a +/-
-                // If it is:
-                    // Solve the sign
-                // If it isn't:
-                    // ERROR: This current operator is being used incorrectly so set an error boolean to true;
-            // If it isn't:
+    if (screenText) {
+        // Checking if the preeceeding text is a +/- operator
+        if (precedingText === PLUS) {
+            if (currentOperator === PLUS) {
+                // Do nothing as the two plusses just equate to a single plus
+            }
+            else if (currentOperator === MINUS) {
+                screenText.textContent = MINUS; // The minus cancels out the plus
+            }
+            // The current operator is being used incorrectly
+            else {
+                // TODO: Set error boolean to true
+                return ERROR;
+            }
+        }
+        else if (precedingText === MINUS) {
+            if (currentOperator === PLUS) {
+                // Do nothing as the minus cancels out the plus
+            }
+            else if (currentOperator === MINUS) {
+                screenText.textContent = PLUS; // The minuses cancel out
+            }
+            // The current operator is being used incorrectly
+            else {
+                // TODO: Set error boolean to true
+                return ERROR;
+            }
+        }
+        else {
+            if (firstOperator) {
                 // ***
                 // Parse the number
                 // Store the current operator for next maths
                 // ***
-        // If there isn't:
-            // Check if this operator is a +/-
-            // If it is:
-                // Do nothing as this could be a sign for a number
-            // If it isn't:
-                // ERROR: This current operator is being used incorrectly so set an error boolean to true;
+            }
+            else {
+                // ***
+                // Parse the number
+                // Do the maths with the previous result, previous operator, and the parsed number
+                // Store the current operator for next maths
+                // ***    
+            }
+        }
+    }
+    else {
+        if (currentOperator === MINUS || currentOperator === PLUS) {
+            // Do nothing as this could be a sign for a number
+        }
+        // The current operator is being used incorrectly
+        else {
+            // Set error boolean to true
+            return ERROR;
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -122,6 +185,3 @@ const num2 = null;
                 // Do nothing as this could be a sign for a number
             // If it isn't:
                 // ERROR: This current operator is being used incorrectly so set an error boolean to true;
-
-
-// }
