@@ -167,6 +167,7 @@ function handleOperator(precedingText, currentOperator, isFirstOperator) {
         // For divisions by 0 
         if (num1 !== ERROR) {
             screen.textContent += currentOperator;
+        }
         screenChanged = true;
     }
 
