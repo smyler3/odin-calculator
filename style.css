@@ -30,7 +30,6 @@ body {
 #holding {
     flex: 2;
     display: flex;
-    justify-content: start;
     align-items: center;
     /* background-color: palevioletred; */
     width: 540px;
@@ -38,14 +37,17 @@ body {
 
 #holdingNum {
     flex: 1;
+    display: flex;
+    justify-content: start;
+    align-items: center;
     font-size: 40px;
-    background-color: aquamarine;
     height: 40px;
+    color: rgb(59, 58, 58);
+    padding: 5px 20px 5px 20px;
 }
 
 #display {
     flex: 6;
-    background-color: lightsalmon;
     width: 540px;
     display: flex;
     justify-content: end;

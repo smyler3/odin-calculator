@@ -286,11 +286,12 @@ function roundAccurately(num, places) {
     return parseFloat(Math.round(num + 'e' + places) + 'e-' + places);
 }
 
-// Rounds the number if needed to fit the screen
+// Rounds the number if needed to fit the
 function checkNum(num) {
-    const roundedNum = num.toPrecision(ROUNDING)
+    let roundedNum = num.toPrecision(ROUNDING);
+    console.log(roundedNum);
     if (num.toString().length > MAX_DIGITS) {
-        if (roundedNum < MAX_DIGITS) {
+        if (roundedNum.toString().length < MAX_DIGITS) {
             num1 = roundedNum;
         }
         else {
@@ -309,5 +310,3 @@ let num1 = null;
 let operator = null;
 let num2 = null;
 let errorFound = false;
-
-// After first operator put the number up the top left
