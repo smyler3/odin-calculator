@@ -256,7 +256,14 @@ function handleOperator(precedingText, currentOperator, isFirstOperator) {
 }
 
 setupKeyEvents();
+window.addEventListener('keydown', function(e) {
+    const key = this.document.querySelector(`div[data-key="${e.key}"]`);
+    key.click();
+});
 let num1 = null;
 let operator = null;
 let num2 = null;
 let errorFound = false;
+
+// TODO: Add rounding if numbers get too large, 
+//       Max number of digits is 12
