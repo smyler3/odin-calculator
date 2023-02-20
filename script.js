@@ -3,10 +3,12 @@ const MINUS = '-';
 const TIMES = '*';
 const DIVIDE = '/';
 const ERROR = "ERROR";
+const MAX_DIGITS = 12;
+const ROUNDING = 4;
 
 // Adds the event listeners for the calculator keys
 function setupKeyEvents() {
-    const screen = document.querySelector('#screen');
+    const display = document.querySelector('#display');
     const numberKeys = document.querySelectorAll('.num');
     const signKeys = document.querySelectorAll('.sign');
     const clear = document.querySelector('.clear');
@@ -15,7 +17,7 @@ function setupKeyEvents() {
     
     // Allow number keys to add text content to the screen display
     numberKeys.forEach(key => key.addEventListener('click', function(e) {
-        updateScreen(e.target.textContent, true);
+        updateDisplay(e.target.textContent, true);
     }))
 
     // Allow the clear key to clear the screen display
@@ -28,34 +30,47 @@ function setupKeyEvents() {
 
     // Allow operation keys to add text content to the screen display
     signKeys.forEach(key => key.addEventListener('click', function(e) {
-            let stopSceenPrint = checkOperator(screen.textContent, key.textContent, !operator);
+            let stopSceenPrint = checkOperator(display.textContent, key.textContent, !operator);
             // Displaying key pressed
             if (!stopSceenPrint) {
-                updateScreen(e.target.textContent, true);
+                updateDisplay(e.target.textContent, true);
             }
     }))
 }
 
 // Changes the screens display by adding or replacing text
-function updateScreen(newText, addText) {
-    screen = document.querySelector('#screen');
-    console.log(`Screen: ${screen.textContent}`);
-    if (screen.textContent === ERROR) {
-        screen.textContent = newText;
+function updateDisplay(newText, addText) {
+    display = document.querySelector('#display');
+    console.log(`Display: ${display.textContent}, Num1: ${num1}`);
+
+    // Overwrite error message
+    if (display.textContent === ERROR || display.textContent == num1) {
+        display.textContent = newText;
+        return;
     }
-    else{
-        if (addText) {
-        screen.textContent += newText; 
-        }
-        else {
-            screen.textContent = newText;
+
+    if (addText) {
+        // There is room on the screen
+        if (display.textContent.length !== MAX_DIGITS) {
+            display.textContent += newText; 
         }
     }
+    else {
+        display.textContent = newText;
+    }
+}
+
+function updateHoldingNum(newText) {
+    holdingNum = document.querySelector('#holdingNum');
+    console.log(`Holding: ${holdingNum.textContent}`);
+
+    holdingNum.textContent = newText;
 }
 
 // Clears the screen and stored values
 function clearScreen() {
-    updateScreen('', false)
+    updateDisplay('', false);
+    updateHoldingNum('');
     num1 = null;
     operator = null;
     num2 = null;
@@ -64,17 +79,19 @@ function clearScreen() {
 
 // Handles the mathematical logic when the equals key is pressed
 function handleEquals(isFirstOperator) {
-    const screen = document.querySelector('#screen');
-    let precedingText = screen.textContent.replace((num1 + operator), ''); 
+    let precedingText = display.textContent.replace(operator, ''); 
     let parsedNum = Number.parseFloat(precedingText);
     console.log(`equals: pre: ${precedingText}, operator: ${operator}, first: ${isFirstOperator}, par${parsedNum}`);
 
     if (!isFirstOperator) {
         if (!isNaN(parsedNum)) {
             num1 = operate(operator, num1, parsedNum);
+            checkNum(num1);
             // For divisions by 0 
             if (num1 !== ERROR) {
-                updateScreen(num1, false)
+                updateHoldingNum(num1);
+                // updateDisplay('');
+                updateDisplay(num1, false)
                 operator = null;
                 num2 = null;
             }
@@ -134,24 +151,24 @@ function divide(numerator, denominator) {
 // Wipes data and displays error on scren
 function setErrorState() {
     clearScreen()
-    updateScreen(ERROR, false)
+    updateDisplay(ERROR, false)
 }
 
 // Checks whether the current operator pressed is legal and returns whether the screen has already been changed or not
 function checkOperator(precedingText, currentOperator, isFirstOperator) {
     console.log(`initial: pre: ${precedingText}, cur: ${currentOperator}, first: ${isFirstOperator}`);
-    const screen = document.querySelector('#screen');
-    let screenChanged = false;
+    const display = document.querySelector('#display');
+    let displayChanged = false;
     let lastChar = '';
 
     // Isolating only non-recorded entry data
     if (!isFirstOperator) {
-        precedingText = screen.textContent.replace((num1 + operator), ''); 
+        precedingText = display.textContent.replace(operator, ''); 
     }
 
     // Grabbing the last available character 
     if (!precedingText) {
-        lastChar = screen.textContent.slice(-1);
+        lastChar = display.textContent.slice(-1);
     }
     else {
         lastChar = precedingText.slice(-1);
@@ -163,101 +180,123 @@ function checkOperator(precedingText, currentOperator, isFirstOperator) {
         // Checking if the preeceeding text is a +/- operator
         if (lastChar === PLUS) {
             if (currentOperator === PLUS) {
-                screenChanged = true; // Do nothing as the two plusses just equate to a single plus
+                displayChanged = true; // Do nothing as the two plusses just equate to a single plus
             }
             else if (currentOperator === MINUS) {
-                updateScreen(screen.textContent.slice(0, -1) + MINUS, false); // The minus cancels out the plus
-                screenChanged = true;
+                updateDisplay(display.textContent.slice(0, -1) + MINUS, false); // The minus cancels out the plus
+                displayChanged = true;
             }
             // The current operator is being used incorrectly
             else {
                 setErrorState();
-                screenChanged = false;
+                displayChanged = false;
             }
         }
         else if (lastChar === MINUS) {
             if (currentOperator === PLUS) {
-                screenChanged = true; // Do nothing as the minus cancels out the plus
+                displayChanged = true; // Do nothing as the minus cancels out the plus
             }
             else if (currentOperator === MINUS) {
-                updateScreen(screen.textContent.slice(0, -1) + PLUS, false); // The minuses cancel out
-                screenChanged = true; 
+                updateDisplay(display.textContent.slice(0, -1) + PLUS, false); // The minuses cancel out
+                displayChanged = true; 
             }
             // The current operator is being used incorrectly
             else {            
                 setErrorState();
-                screenChanged = false;
+                displayChanged = false;
             }
         }
         else {
             if (!errorFound) {
-                screenChanged = handleOperator(precedingText, currentOperator, isFirstOperator);
+                displayChanged = handleOperator(precedingText, currentOperator, isFirstOperator);
             }
         }
     }
     else {
         if (lastChar === PLUS) {
             if (currentOperator === PLUS) {
-                screenChanged = true; // Do nothing as the two plusses just equate to a single plus
+                displayChanged = true; // Do nothing as the two plusses just equate to a single plus
             }
             else if (currentOperator === MINUS) {
-                updateScreen(screen.textContent.slice(0, -1) + MINUS, false); // The minus cancels out the plus
+                updateDisplay(display.textContent.slice(0, -1) + MINUS, false); // The minus cancels out the plus
                 operator = MINUS;
-                screenChanged = true;
+                displayChanged = true;
             }
             // The current operator is being used incorrectly
             else {              
                 setErrorState();
-                screenChanged = false;
+                displayChanged = false;
             }
         }
         else if (lastChar === MINUS) {
             if (currentOperator === PLUS) {
-                screenChanged = true; // Do nothing as the minus cancels out the plus
+                displayChanged = true; // Do nothing as the minus cancels out the plus
             }
             else if (currentOperator === MINUS) {
-                updateScreen(screen.textContent.slice(0, -1) + PLUS, false);  // The minuses cancel out
+                updateDisplay(display.textContent.slice(0, -1) + PLUS, false);  // The minuses cancel out
                 operator = PLUS;
-                screenChanged = true; 
+                displayChanged = true; 
             }
             // The current operator is being used incorrectly
             else {               
                 setErrorState();
-                screenChanged = false;
+                displayChanged = false;
             }
         }
     }
 
-    return screenChanged;
+    return displayChanged;
 }
 
 // Handles mathematical logic when an operator key is pressed
 function handleOperator(precedingText, currentOperator, isFirstOperator) {
     console.log(`handle: pre: ${precedingText}, cur: ${currentOperator}, first: ${isFirstOperator}`);
     let parsedNum = Number.parseFloat(precedingText);
-    let screenChanged = false;
+    let displayChanged = false;
 
     // First operator called
     if (isFirstOperator) {
         num1 = parsedNum;
         console.log(`handle: parsed number: ${parsedNum}`);
+        updateHoldingNum(num1);
+        updateDisplay('');
     }
     // Subsequent operator called
     else {
         num1 = operate(operator, num1, parsedNum);
-        updateScreen(num1, false)
+        checkNum(num1);
+        updateHoldingNum(num1);
+        updateDisplay(num1, false)
         // For divisions by 0 
         if (num1 !== ERROR) {
-            updateScreen(currentOperator, true)
+            updateDisplay(currentOperator, true)
         }
         else {
             setErrorState();
         }
-        screenChanged = true;
+        displayChanged = true;
     }
 
     operator = currentOperator;
-    return screenChanged;
+    return displayChanged;
+}
+
+// Rounds to keep text inscreem
+function roundAccurately(num, places) {
+    return parseFloat(Math.round(num + 'e' + places) + 'e-' + places);
+}
+
+// Rounds the number if needed to fit the screen
+function checkNum(num) {
+    const roundedNum = num.toPrecision(ROUNDING)
+    if (num.toString().length > MAX_DIGITS) {
+        if (roundedNum < MAX_DIGITS) {
+            num1 = roundedNum;
+        }
+        else {
+            checkNum(roundedNum)
+        }
+    }
 }
 
 setupKeyEvents();
@@ -271,5 +310,4 @@ let operator = null;
 let num2 = null;
 let errorFound = false;
 
-// TODO: Add rounding if numbers get too large, 
-//       Max number of digits is 12
+// After first operator put the number up the top left

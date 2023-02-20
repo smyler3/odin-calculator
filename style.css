@@ -19,11 +19,37 @@ body {
     background-color: mediumseagreen;
     flex: 1 1 auto;
     display: flex;
-    justify-content: end;
+    flex-direction: column;
+    justify-content: start;
     align-items: center;
     padding: 25px;
     height: 45px;
     font-size: 90px;
+}
+
+#holding {
+    flex: 2;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    /* background-color: palevioletred; */
+    width: 540px;
+}
+
+#holdingNum {
+    flex: 1;
+    font-size: 40px;
+    background-color: aquamarine;
+    height: 40px;
+}
+
+#display {
+    flex: 6;
+    background-color: lightsalmon;
+    width: 540px;
+    display: flex;
+    justify-content: end;
+    align-items: center;
 }
 
 #buttonPad {
