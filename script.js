@@ -40,11 +40,16 @@ function setupKeyEvents() {
 function updateScreen(newText, addText) {
     screen = document.querySelector('#screen');
     console.log(`Screen: ${screen.textContent}`);
-    if (addText) {
-       screen.textContent += newText; 
-    }
-    else {
+    if (screen.textContent === ERROR) {
         screen.textContent = newText;
+    }
+    else{
+        if (addText) {
+        screen.textContent += newText; 
+        }
+        else {
+            screen.textContent = newText;
+        }
     }
 }
 
@@ -260,6 +265,7 @@ window.addEventListener('keydown', function(e) {
     const key = this.document.querySelector(`div[data-key="${e.key}"]`);
     key.click();
 });
+
 let num1 = null;
 let operator = null;
 let num2 = null;
