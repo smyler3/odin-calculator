@@ -2,6 +2,7 @@ const PLUS = '+';
 const MINUS = '-';
 const TIMES = '*';
 const DIVIDE = '/';
+const DECIMAL = '.';
 const ERROR = "ERROR";
 const MAX_DIGITS = 12;
 const ROUNDING = 4;
@@ -60,6 +61,7 @@ function updateDisplay(newText, addText) {
     }
 }
 
+// Stores the last recorded number up the top left of the screen
 function updateHoldingNum(newText) {
     holdingNum = document.querySelector('#holdingNum');
     console.log(`Holding: ${holdingNum.textContent}`);
@@ -75,6 +77,7 @@ function clearScreen() {
     operator = null;
     num2 = null;
     errorFound = false;
+    decimalUsed = false;
 }
 
 // Handles the mathematical logic when the equals key is pressed
@@ -106,6 +109,8 @@ function handleEquals(isFirstOperator) {
     else {
         setErrorState();
     }
+
+    decimalUsed = false;
 }
 
 // Calls an operator function on two numbers
@@ -176,7 +181,17 @@ function checkOperator(precedingText, currentOperator, isFirstOperator) {
 
     console.log(`post: pre: ${precedingText}, cur: ${currentOperator}, first: ${isFirstOperator}, last: ${lastChar}`);
 
-    if (precedingText) {
+    // Checking if a decimal is being used twice
+    if (currentOperator === DECIMAL) {
+        if (decimalUsed) {
+            // setErrorState(); // Remove comments to return error on secomd decimal use
+            displayChanged = true;
+        }
+        else {
+            decimalUsed = true;
+        }
+    }
+    else if (precedingText) {
         // Checking if the preeceeding text is a +/- operator
         if (lastChar === PLUS) {
             if (currentOperator === PLUS) {
@@ -205,6 +220,10 @@ function checkOperator(precedingText, currentOperator, isFirstOperator) {
                 setErrorState();
                 displayChanged = false;
             }
+        }
+        else if (lastChar === DECIMAL && precedingText === DECIMAL) {
+            setErrorState(); // No number was put before the decimal
+            displayChanged = true;
         }
         else {
             if (!errorFound) {
@@ -277,6 +296,7 @@ function handleOperator(precedingText, currentOperator, isFirstOperator) {
         displayChanged = true;
     }
 
+    decimalUsed = false;
     operator = currentOperator;
     return displayChanged;
 }
@@ -310,3 +330,4 @@ let num1 = null;
 let operator = null;
 let num2 = null;
 let errorFound = false;
+let decimalUsed = false;
