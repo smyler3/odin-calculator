@@ -309,11 +309,6 @@ function handleOperator(precedingText, currentOperator, isFirstOperator) {
     return displayChanged;
 }
 
-// Rounds to keep text inscreem
-function roundAccurately(num, places) {
-    return parseFloat(Math.round(num + 'e' + places) + 'e-' + places);
-}
-
 // Rounds the number if needed to fit the
 function checkNum(num) {
     let roundedNum = num.toPrecision(ROUNDING);
