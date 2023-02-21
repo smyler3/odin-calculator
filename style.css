@@ -70,6 +70,20 @@ body {
     justify-content: space-around;
 }
 
+#bottomNumPad {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+}
+
+div > #key.zero {
+    flex: 53;
+}
+
+div > #key.decimal {
+    flex: 25;
+}
+
 #operatorPad {
     flex: 2;
     display: flex;
