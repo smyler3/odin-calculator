@@ -70,12 +70,6 @@ body {
     justify-content: space-around;
 }
 
-#bottomNumPad {
-    flex: 1;
-    display: flex;
-    flex-direction: row;
-}
-
 div > #key.zero {
     flex: 53;
 }
