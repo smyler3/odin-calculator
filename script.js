@@ -89,9 +89,9 @@ function handleEquals(isFirstOperator) {
     if (!isFirstOperator) {
         if (!isNaN(parsedNum)) {
             num1 = operate(operator, num1, parsedNum);
-            checkNum(num1);
             // For divisions by 0 
             if (num1 !== ERROR) {
+                checkNum(num1);
                 updateHoldingNum(num1);
                 // updateDisplay('');
                 updateDisplay(num1, false)
@@ -262,6 +262,14 @@ function checkOperator(precedingText, currentOperator, isFirstOperator) {
                 displayChanged = false;
             }
         }
+        // The current operator is being used incorrectly
+        else if (lastChar === TIMES || lastChar === DIVIDE) {
+            alert("yuh");
+            if (currentOperator === TIMES || currentOperator === DIVIDE) {
+                setErrorState();
+                displayChanged = true;
+            }
+        }
     }
 
     return displayChanged;
@@ -283,15 +291,15 @@ function handleOperator(precedingText, currentOperator, isFirstOperator) {
     // Subsequent operator called
     else {
         num1 = operate(operator, num1, parsedNum);
-        checkNum(num1);
-        updateHoldingNum(num1);
-        updateDisplay(num1, false)
         // For divisions by 0 
-        if (num1 !== ERROR) {
-            updateDisplay(currentOperator, true)
+        if (num1 === ERROR) {
+            setErrorState();
         }
         else {
-            setErrorState();
+            checkNum(num1);
+            updateHoldingNum(num1);
+            updateDisplay(num1, false)
+            updateDisplay(currentOperator, true)
         }
         displayChanged = true;
     }
