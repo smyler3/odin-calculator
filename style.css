@@ -2,6 +2,13 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#calculatorBody,
+#key,
+#buttonPad {
+    border-radius: 15px;
 }
 
 #calculatorBody {
@@ -59,7 +66,7 @@ body {
     justify-content: center;
     gap: 10px;
     padding: 10px;
-    background-color: rgb(151, 141, 141);
+    background-color: rgb(206, 206, 206);
 }
 
 #numberPad {
@@ -101,7 +108,7 @@ div > #key.decimal {
     margin: 4px;
     min-height: 40px;
     min-width: 40px;
-    font-size: 30px;
+    font-size: 60px;
     font-weight: bold;
     color: white;
     background-color: rgb(25, 41, 41);
